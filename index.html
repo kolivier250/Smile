@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+            width: 100%;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FAQ Bot</h1>
+        <input type="text" id="question" placeholder="Ask a question...">
+        <button onclick="askQuestion()">Ask</button>
+        <div class="response" id="response"></div>
+
+        <h2>Search FAQs</h2>
+        <input type="text" id="keyword" placeholder="Enter a keyword...">
+        <button onclick="searchFAQs()">Search</button>
+        <div class="response" id="searchResults"></div>
+    </div>
+
+    <script>
+        async function askQuestion() {
+            const question = document.getElementById('question').value;
+            const responseDiv = document.getElementById('response');
+
+            const response = await fetch(`/ask?question=${encodeURIComponent(question)}`);
+            const data = await response.json();
+
+            responseDiv.innerHTML = `<strong>Q:</strong> ${data.question}<br><strong>A:</strong> ${data.answer}`;
+        }
+
+        async function searchFAQs() {
+            const keyword = document.getElementById('keyword').value;
+            const resultsDiv = document.getElementById('searchResults');
+
+            const response = await fetch(`/search?keyword=${encodeURIComponent(keyword)}`);
+            const data = await response.json();
+
+            let html = '';
+            data.forEach(item => {
+                html += `<div><strong>Category:</strong> ${item.category}<br><strong>Q:</strong> ${item.question}<br><strong>A:</strong> ${item.answer}</div><hr>`;
+            });
+
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
